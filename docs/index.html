@@ -20,22 +20,23 @@
 <body>
   <div>
     <div class="wrapper">
-      <h1 style="font-family: &#39;Lato&#39;, sans-serif;">Your Title Here</h1>
+      <h1 style="font-family: &#39;Lato&#39;, sans-serif;">Don’t Guess: Abstention Recognition and Clarification in Post-Training of LLMs</h1>
       <h4 style="font-family: &#39;Lato&#39;, sans-serif; ">Fall 2024 CSCI 5541 NLP: Class Project - University of Minnesota</h4>
-      <h4 style="font-family: &#39;Lato&#39;, sans-serif; ">Team Name</h4>
+      <h4 style="font-family: &#39;Lato&#39;, sans-serif; ">Hallucination Group</h4>
 
       <div class="authors-wrapper">
         
         <div class="author-container">
           <div class="author-image">
                         
-              <img src="">
+              <img src="" alt="Haotian Zhai">
             
             
           </div>
           <p>
                         
-              Member 1
+              <strong>Haotian Zhai</strong><br/>
+              Project lead & RLVR design
             
           </p>
         </div>
@@ -43,12 +44,13 @@
         <div class="author-container">
           <div class="author-image">
             
-            <img src="">
+            <img src="" alt="Jingcheng Liang">
             
           </div>
           <p>
             
-            Member 2
+            <strong>Jingcheng Liang</strong><br/>
+            Algorithm training & evaluation
             
           </p>
         </div>
@@ -56,22 +58,24 @@
         <div class="author-container">
           <div class="author-image">
             
-              <img src="">            
-            
+              <img src="" alt="Haotian Huang">            
+           
           </div>
           <p>
-              Member 3
+              <strong>Haotian Huang</strong><br/>
+              Data cleaning & baselines
           </p>
         </div>
         
         <div class="author-container">
           <div class="author-image">
                         
-              <img src="">
+              <img src="" alt="Zekang Li">
             
           </div>
           <p>
-            Member 4
+            <strong>Zekang Li</strong><br/>
+            Data curation & evaluation
           </p>
         </div>
         
@@ -84,29 +88,29 @@
           <!-- Github link -->
           <span class="link-block">
             <a
-              href=""
+              href="#"
               target="_blank"
               class="external-link button is-normal is-rounded is-dark is-outlined"
             >
-            <span>Final Report</span>
+            <span>Final Report (coming soon)</span>
             </a>
           </span>
           <span class="link-block">
             <a
-              href=""
+              href="#"
               target="_blank"
               class="external-link button is-normal is-rounded is-dark is-outlined"
             >
-            <span>Code</span>
+            <span>Code (coming soon)</span>
             </a>
           </span>      
           <span class="link-block">
             <a
-              href=""
+              href="#"
               target="_blank"
               class="external-link button is-normal is-rounded is-dark is-outlined"
             >
-            <span>Model Weights</span>
+            <span>Model Weights (coming soon)</span>
             </a>
           </span>              
         </div>
@@ -129,20 +133,20 @@
     
     <h2 id="abstract">Abstract</h2>
 
-<p>One or two sentences on the motivation behind the problem you are solving. One or two sentences describing the approach you took. One or two sentences on the main result you obtained.</p>
+<p>Large language models tuned with reinforcement learning and verifiable rewards are incentivized to always answer, even when the prompt is underspecified or outside of the model’s knowledge boundary, which amplifies hallucinations. We propose <em>Don’t Guess</em>, a post-training recipe that mixes answerable and unanswerable queries, rewards explicit abstention via <code>I don't know.</code>, and requires a concise clarification or explanation that is checked by an LLM-as-judge. By aligning incentives around calibrated refusals and actionable follow-up prompts, we aim to reduce hallucination rate, improve trustworthiness, and lower wasted computation on ill-posed questions.</p>
 
 <hr>
 
 <h2 id="teaser">Teaser Figure</h2>
 
-<p>A figure that conveys the main idea behind the project or the main application being addressed. This figure is from <a href="https://arxiv.org/pdf/2210.07469">StyLEx</a>.</p>
+<p>The teaser figure (to be updated) contrasts ambiguous prompts, where we should request clarification, against semantically complete yet unanswerable prompts, where we should abstain and explain the missing conditions.</p>
 
-<p class="sys-img"><img src="./files/teaser.png" alt="imgname"></p>
+<p class="sys-img"><img src="./files/teaser.png" alt="Contrasting ambiguous vs. unanswerable prompts"></p>
 
 
-<h3 id="the-timeline-and-the-highlights">Any subsection</h3>
+<h3 id="the-timeline-and-the-highlights">Ambiguity vs. Unanswerability</h3>
 
-<p>If you need to explain more about your figure</p>
+<p>Ambiguity stems from incomplete semantics (e.g., “Send <em>it</em> to Alex”), while unanswerability stems from complete semantics that nonetheless lack sufficient constraints (e.g., a rectangle with perimeter 20 but no side lengths). Both should trigger interaction, but only the latter merits a firm abstention.</p>
 
 <hr>
 
@@ -152,21 +156,21 @@
 <b>What did you try to do? What problem did you try to solve? Articulate your objectives using absolutely no jargon.</b>
 </p>
 <p>
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+We want large language models to say “I don’t know” when a question is impossible to answer safely, and to follow up with a short request that explains what information is missing. The objective is a tutor-like agent that knows when to stop guessing and instead guides the user toward a resolvable version of the task.
 </p>
 
 <p>
 <b>How is it done today, and what are the limits of current practice?</b>
 </p>
 <p>
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-<p>
+Modern instruction tuning and RL with verifiable rewards (RLVR) reward models for delivering an answer, so the easiest way to get a high reward is to always respond—even when the prompt is underspecified, outside the model’s knowledge, or built on a false premise. Recent studies (Kalai et&nbsp;al., 2025; Kirichenko et&nbsp;al., 2025; Yao et&nbsp;al., 2025) show this causes more hallucinations and worse calibration than instruction-only baselines.
+</p>
 
 <p>
 <b>Who cares? If you are successful, what difference will it make?</b>
 </p>
 <p>
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+Reliable abstention improves the usability of reasoning agents, reduces wasted tokens on fabricated answers, and keeps downstream decision makers from acting on incorrect information. Well-calibrated clarifications are also easier to audit, which benefits safety reviewers and researchers working on high-stakes domains.
 </p>
 
 <hr>
@@ -178,7 +182,7 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
 </p>
 
 <p>
-Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+We curate paired answerable and unanswerable queries by filtering AbstentionBench and related datasets (Song et&nbsp;al., 2025; Wang et&nbsp;al., 2025; Zhang et&nbsp;al., 2025) and then auto-annotate each unanswerable sample with the clarifying question or explanation it should elicit. The RLVR objective mixes both query types: answerable items receive a rule-based reward for correctness, while unanswerable items only reward the policy when it both outputs <code>I don't know.</code> and produces the expected clarification as judged by a specialist LLM. This simple, verifiable contract targets calibrated behavior without supervising intermediate reasoning steps.
 </p>
 
 <p>
@@ -186,7 +190,7 @@ Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deseru
 </p>
 
 <p>
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+Judge reliability is the main risk—we rely on an LLM-as-judge to confirm whether a clarification matches the reference, and judge drift could destabilize RL. As a fallback MVP, we can restrict the domain to math problems (à la SUM) and replace free-form clarifications with a five-way classification over predefined unanswerability sources, ensuring deterministic reward signals even if RL training stalls.
 </p>
 
 <hr>
@@ -196,7 +200,7 @@ Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dolor
 <b>How did you measure success? What experiments were used? What were the results, both quantitative and qualitative? Did you succeed? Did you fail? Why?</b>
 </p>
 <p>
-Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+Full-scale RL runs are scheduled on an 8×A100-80GB MSI HPC node. Before that, we will prototype instruction prompts on a single A40/L40 and measure (1) abstention accuracy and over-refusal rate on held-out AbstentionBench subsets, (2) clarification helpfulness judged by Omni-Math style LLM evaluators, and (3) token savings from early termination. Success means matching baseline accuracy on answerable items while halving hallucination rate on unanswerable ones; failure modes will likely come from noisy judge signals or insufficient coverage of unanswerable patterns.
 </p>
 <table>
   <thead>
@@ -209,19 +213,19 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
   </thead>
   <tbody>
     <tr>
-      <td style="text-align: center"><strong>Sentence</strong></td>
-      <td style="text-align: center">Example 1</td>
-      <td style="text-align: center">Example 2</td>
-      <td style="text-align: center">Example 3</td>
+      <td style="text-align: center"><strong>Goal</strong></td>
+      <td style="text-align: center">Abstention accuracy on curated AbstentionBench split</td>
+      <td style="text-align: center">Clarification quality judged by LLM-as-judge</td>
+      <td style="text-align: center">Fallback math-only MVP</td>
     </tr>
     <tr>
-      <td style="text-align: center"><strong>Errors</strong></td>
-      <td style="text-align: center">error A, error B, error C</td>
-      <td style="text-align: center">error C</td>
-      <td style="text-align: center">error B</td>
+      <td style="text-align: center"><strong>Primary Metric</strong></td>
+      <td style="text-align: center">Precision/recall of “I don’t know”</td>
+      <td style="text-align: center">Judge agreement &amp; helpfulness scores</td>
+      <td style="text-align: center">Classification accuracy over five unanswerable sources</td>
     </tr>
   </tbody>
-  <caption>Table 1. This is Table 1's caption</caption>
+  <caption>Table 1. Planned evaluation axes before and after RL fine-tuning.</caption>
 </table>
 <br>
 <div style="text-align: center;">
@@ -236,10 +240,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 <h2 id="conclusion">Conclustion and Future Work</h2>
 <p>
 
-  How easily are your results able to be reproduced by others?
-  Did your dataset or annotation affect other people's choice of research or development projects to undertake?
-  Does your work have potential harm or risk to our society? What kinds? If so, how can you address them?
-  What limitations does your model have? How can you extend your work for future research?</p>
+Reproducibility hinges on transparent reward definitions and public data. We plan to release the filtered AbstentionBench subset plus auto-generated clarifications so other groups can rerun policy gradient training with PPO or GRPO. The main societal risk is over-abstention in critical scenarios, so we will audit for unnecessary refusals and document domains where the model under-performs. Future work includes broader coverage of modalities (vision, tools), integrating retrieval to shrink the “unknown” region, and stress-testing how safely the model escalates when faced with harmful or policy-breaking prompts.</p>
 
 
 <hr>
