@@ -184,13 +184,82 @@ Reliable abstention improves the usability of reasoning agents, reduces wasted t
 We curate paired answerable and unanswerable queries by filtering AbstentionBench and related datasets (Song et&nbsp;al., 2025; Wang et&nbsp;al., 2025; Zhang et&nbsp;al., 2025) and then auto-annotate each unanswerable sample with the clarifying question or explanation it should elicit. The RLVR objective mixes both query types: answerable items receive a rule-based reward for correctness, while unanswerable items only reward the policy when it both outputs <code>I don't know.</code> and produces the expected clarification as judged by a specialist LLM. This simple, verifiable contract targets calibrated behavior without supervising intermediate reasoning steps.
 </p>
 
-<p>
+<!-- <p>
 <b>What problems did you anticipate? What problems did you encounter? Did the very first thing you tried work?</b>
 </p>
 
 <p>
 Judge reliability is the main risk—we rely on an LLM-as-judge to confirm whether a clarification matches the reference, and judge drift could destabilize RL. As a fallback MVP, we can restrict the domain to math problems (à la SUM) and replace free-form clarifications with a five-way classification over predefined unanswerability sources, ensuring deterministic reward signals even if RL training stalls.
-</p>
+</p> -->
+
+<hr>
+
+<h2 id="mid-check">Midterm Progress Check</h2>
+
+<h3>1. Project Progress & Preliminary Results</h3>
+
+<h4>1.1 Data Construction Progress</h4>
+<p><strong>Research gap:</strong> No public dataset simultaneously covers our four essentials—paired answerable/unanswerable queries, explicit refusals, explanation of the missing information, and awareness of knowledge boundaries—so we curated new cross-domain data to fill that hole.</p>
+<p><strong>Cross-domain test set:</strong> We down-sampled AbstentionBench, cleaning roughly 100 samples per domain with an o3-mini-assisted pipeline, and ended up with ~1,800 QA pairs dedicated to evaluating boundary awareness.</p>
+<p><strong>Training set:</strong> We rely on existing reasoning/knowledge datasets and their officially released unanswerable variants—DeepScaleR, MMLU-Math, GPQA-Diamond, GSM8K, etc.—to avoid injecting extra noise by rewriting prompts.</p>
+<p><strong>Overall plan:</strong> Train on stable, previously vetted unanswerable data, then probe generalized refusal behavior on our cleaned cross-domain split to decouple “learning to refuse” from “handling unseen domains.”</p>
+
+<h4>1.2 Experimental Setup & Metrics</h4>
+<p>We currently test on the SUM math benchmark (DeepScaleR’s unanswerable extension) and evaluate DeepSeek-R1, Qwen2.5-7B-Instruct, and Qwen2.5-3B-Instruct with four shared metrics:</p>
+<ul>
+  <li>Accuracy on answerable questions</li>
+  <li>False refusals / incorrect “I don’t know” on answerable questions</li>
+  <li>Correct refusal rate on unanswerable questions</li>
+  <li>Unanswerable questions with a correct refusal <em>and</em> explanation</li>
+</ul>
+
+<h4>1.3 Key Findings</h4>
+<table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Answerable Accuracy</th>
+      <th>Answerable False Refusal</th>
+      <th>Unanswerable Correct Refusal</th>
+      <th>Unanswerable w/ Correct Explanation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>DeepSeek-R1</td>
+      <td>99.3%</td>
+      <td>0.4%</td>
+      <td>21.5%</td>
+      <td>18.4%</td>
+    </tr>
+    <tr>
+      <td>Qwen2.5-7B-Instruct</td>
+      <td>75.4%</td>
+      <td>16.9%</td>
+      <td>20.4%</td>
+      <td>18.5%</td>
+    </tr>
+    <tr>
+      <td>Qwen2.5-3B-Instruct</td>
+      <td>43.8%</td>
+      <td>6.7%</td>
+      <td>15.1%</td>
+      <td>13.7%</td>
+    </tr>
+  </tbody>
+  <caption>Table 2. Midterm evaluation on SUM unanswerable split.</caption>
+</table>
+<p><strong>Compared with SUM baseline numbers:</strong> The SUM paper reports only ~11% refusal rate for Qwen2.5-7B, whereas our prompt + evaluation pipeline yields ~18.5% correct “explain-and-refuse,” showing that enforcing explanation raises the bar beyond binary abstention.</p>
+<p><strong>Overall observations:</strong> Model scale and training depth dominate answerable accuracy (3B ≪ 7B &lt; DeepSeek-R1). Even strong reasoning models still refuse only ~20% of unanswerable questions, so boundary awareness remains weak.</p>
+
+<h3>2. Current Issues & Limitations</h3>
+<ul>
+  <li><strong>LLM-as-Judge noise:</strong> Offline o3-mini decides both “did it refuse?” and “did it cite the real missing condition?” so any judge errors directly add variance to our metrics.</li>
+  <li><strong>Evaluation mismatch vs. SUM:</strong> The SUM paper mostly checks for literal <code>I don't know</code> strings, whereas we pass the full response through a judge for semantic scoring, so numbers are not apples-to-apples.</li>
+  <li><strong>String matching fails to detect true refusals:</strong> Smaller models often say “I don’t know” and then hallucinate an answer; judge-based semantic checks are required, which reintroduces the noise above.</li>
+  <li><strong>Output formatting is underspecified:</strong> Reasoning and answers are interleaved, making auto-evaluation hard; we plan to enforce templates like <code>Reasoning:</code> / <code>Answer:</code> to simplify parsing.</li>
+  <li><strong>Cross-domain data cleaning is expensive:</strong> AbstentionBench domains are large and heterogeneous; even with LLM+rule pipelines we still need targeted manual inspection to ensure quality.</li>
+</ul>
 
 <hr>
     
