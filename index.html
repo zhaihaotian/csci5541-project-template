@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Investigating absent recognition and calibration in post-training of LLMs">
+  <meta name="keywords" content="Abstain-R1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Abstain-R1: absent recognition and calibration in Post-Training of LLMs</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <!-- MathJax for LaTeX formulas -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']]
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  
+</nav>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Abstain-R1: absent recognition and calibration in Post-Training of LLMs</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a>Haotian Zhai</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a>Jingcheng Liang</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a>Haotian Huang</a><sup>1</sup>,
+            </span>
+            <span class="author-block">
+              <a>Zekang Li</a><sup>1</sup>
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>University of Minnesota, Twin Cities</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="https://leo-leung04.github.io/Abstain-R1-Web/CSCI_5541_Proposal_Report (7).pdf"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Report</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/leo-leung04/Abstain-R1#"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+              <!-- Model Link. -->
+              <span class="link-block">
+                <a href="https://huggingface.co/collections/leoleung04/abstain-r1"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="far fa-images"></i>
+                  </span>
+                  <span>Model</span>
+                </a>
+              </span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Reinforcement fine-tuning improves large language model reasoning,
+            but often incentivizes models to produce an answer even under underspecified queries,
+            leading to guessing and hallucinations.
+            Prior approaches either enforce generic abstention (e.g., ``I don't know'')
+            or encourage follow-up questions without supervising the quality of refusal rationales,
+            resulting in superficial abstention without meaningful clarification.
+          </p>
+          <p>
+            We propose a novel Reinforcement Learning with Verifiable Rewards (RLVR) framework
+            that treats unanswerability as an explicit learning target and jointly optimizes
+            calibrated abstention and high-quality post-refusal clarification,
+            while preserving strong performance on answerable queries.
+            To enable stable training from scratch, we construct a cold-start dataset
+            by augmenting existing benchmarks with structured reasoning traces
+            and evaluate our approach across multiple dimensions,
+            including answer accuracy on solvable queries, refusal calibration,
+            format adherence, and the semantic quality of clarifications.
+          </p>
+          <p>
+            Experiments show that our method significantly reduces guessing and hallucinations,
+            improves calibrated abstention with informative clarifications,
+            and maintains strong performance on answerable queries.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+</section>
+
+<!-- Overview Figure -->
+<section class="section" style="padding-top: 0;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths has-text-centered">
+        <figure>
+          <img src="./static/images/jdg.drawio.svg" alt="Overview figure" style="width: 100%; max-width: 550px;">
+          <figcaption style="margin-top: 1em; color: #666; font-size: 0.95em;">
+            <strong>Figure 1:</strong> Comparison between uninformative refusal (left) and informative refusal (right).
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+
+
+    <!-- General Overview -->
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">General Overview</h2>
+
+        <div class="content has-text-justified">
+          <p style="border-left: 3px solid #dbdbdb; padding-left: 1em; color: #363636; font-weight: 500; font-size: 1.1em;">Novelty: Compared to the state-of-the-art methods/systems/datasets, how novel is your approach? Is your work publishable?</p>
+          <p>Our work diverges from traditional alignment methods that primarily rely on Supervised Fine-Tuning (SFT) or binary safety rewards to enforce generic refusal. The core novelty of our RLVR framework lies in treating "clarification" not as a simple linguistic pattern, but as a verifiable reasoning objective. We uniquely employ Group Relative Policy Optimization (GRPO) driven by a hierarchical split-incentive mechanism (0.3 for refusal, 0.7 for verified clarification). By strictly verifying mathematical correctness via symbolic execution and clarification logic via an LLM-as-judge, we effectively transform "unanswerability" from a static safety constraint into an explicit, learnable reasoning task, bridging the gap between rigorous reasoning and helpful alignment.</p>
+          <p>This work is highly publishable as it rigorously addresses the "Hallucination Tax" by transforming "unanswerability" into a verifiable reasoning task via our novel RLVR framework. Validated by strict evaluation protocols, our methodology offers a significant technical contribution to the field of reliable LLM alignment.</p>
+
+          <p style="border-left: 3px solid #dbdbdb; padding-left: 1em; color: #363636; font-weight: 500; font-size: 1.1em;">Significance: How storng is your result? Is your finding still holding if different setups or prompting tricks?</p>
+          <p>Our results demonstrate strong robustness to experimental variability. To mitigate the inherent stochasticity of language model generation, we adopt a controlled evaluation protocol: instead of relying on a single inference pass, we perform five independent rollouts for each model under identical instructions and report the averaged performance. This procedure reduces the influence of random effects.</p>
+          <p>We further examine the robustness of our findings through a sensitivity analysis of the evaluation metric based on an LLM-as-judge. Specifically, we evaluate models using prompts with varying levels of strictness. Across all evaluation settings, our proposed model, Abstain-R1, consistently outperforms other models in the quality of refusal rationales.</p>
+          <p>This confirms that our findings are intrinsic to the model's capability and hold true regardless of setup variations.</p>
+        </div>
+      </div>
+    </div>
+
+    <hr style="margin: 2rem 0; border: none; border-top: 1px solid #dbdbdb;">
+
+    <!-- Introduction / Background / Motivation -->
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Introduction / Background / Motivation</h2>
+
+        <div class="content has-text-justified">
+
+          <p style="border-left: 3px solid #dbdbdb; padding-left: 1em; color: #363636; font-weight: 500; font-size: 1.1em;">What did you try to do? What problem did you try to solve? Articulate your objectives using absolutely no jargon.</p>
+          <p> We tried to fix a common habit in current AI models: AI systems often give confident answers even when they do not actually have enough information to answer correctly. This can lead to wrong or made-up responses that sound convincing but are unreliable.</p>
+          <p> Our goal was to teach an AI system not only to say “I can't answer this” when a question cannot be answered, but also to explain why it cannot answer and what information would be needed to move forward. At the same time, I wanted the system to keep giving accurate answers when a question can be answered, rather than refusing too often. </p>
+          
+          <p style="border-left: 3px solid #dbdbdb; padding-left: 1em; color: #363636; font-weight: 500; font-size: 1.1em;">How is it done today by other researchers? What are the limitations and challenges of current practice?</p>
+          <p>Current research on unanswerability and abstention mainly focuses on identifying when models should refuse to answer and analyzing how failures to abstain are linked to hallucinations. Benchmark studies such as AbstentionBench show that many widely used language models fail to abstain appropriately when questions are unanswerable. Other work, such as Hallucination Tax, demonstrates that when queries lack necessary conditions, reinforcement-learning-tuned models may invent missing constraints and respond with high confidence. From a theoretical perspective, prior analyses argue that standard evaluation setups reward only correct answers while assigning no credit to abstention, which implicitly incentivizes guessing rather than admitting uncertainty.</p>
+          <p>In applied and high-stakes domains, such as clinical reasoning, domain-specific systems like KnowGuard emphasize evidence-aware abstention, particularly in multi-turn settings where critical information is missing. These approaches highlight the importance of refusing to answer when evidence is insufficient, especially to avoid harmful outcomes.</p>
+          <p>However, existing practices face several limitations. Many reinforcement-learning-based approaches focus primarily on enforcing a generic refusal (e.g., saying “I don't know”) or encouraging follow-up questions, without explicitly evaluating whether the post-refusal content is useful, actionable, or well-justified. As a result, models may learn to abstain as a surface behavior without providing meaningful explanations or clarifications. This lack of explicit supervision and evaluation for post-refusal quality makes it difficult to ensure that abstention behavior is informative, calibrated, and helpful to users.</p>
+          
+          <p style="border-left: 3px solid #dbdbdb; padding-left: 1em; color: #363636; font-weight: 500; font-size: 1.1em;">Who might be interested in your work? What kinds of impact can you make?</p>
+          <p>Many people rely on AI systems for information, decision support, and learning, but these systems often give confident answers even when they should not. This can mislead users, reduce trust, and in some cases cause real harm, especially when users do not realize that an answer is unreliable.</p>
+          <p>If this project is successful, AI systems will become better at recognizing their own limits. Instead of guessing or giving vague refusals, they can clearly explain why a question cannot be answered and what information is missing. This makes AI systems more transparent, more trustworthy, and easier for people to work with. Over time, this can reduce misinformation, help users make better decisions, and encourage safer use of AI in settings where correctness and honesty matter.</p>
+        </div>
+      </div>
+    </div>
+    <!--/ Concurrent Work. -->
+
+
+  <hr style="margin: 2rem 0; border: none; border-top: 1px solid #dbdbdb;">
+
+  <!-- Approach -->
+  <div class="columns is-centered">
+    <div class="column is-full-width">
+      <h2 class="title is-3">Approach</h2>
+
+      <div class="content has-text-justified">
+
+        <p style="border-left: 3px solid #dbdbdb; padding-left: 1em; color: #363636; font-weight: 500; font-size: 1.1em;">What did you do exactly? How did you solve the problem? Why did you think it would be successful? What is your hypothesis?</p>
+        <p>We addressed the issue of model hallucination on underspecified queries by implementing a two-stage alignment pipeline for the Qwen2.5-3B-Instruct model, grounded in the hypothesis that unanswerability should be treated as an explicit, learnable reasoning task rather than a simple binary refusal. To achieve this, we first constructed a high-quality cold-start dataset by augmenting existing benchmarks with structured reasoning traces to initialize the policy.</p>
+        
+        <figure style="text-align: center; margin: 1.5em 0;">
+          <img src="./static/images/data.jpg" alt="Data augmentation pipeline" style="max-width: 600px; width: 100%;">
+          <figcaption style="margin-top: 0.75em; color: #666; font-size: 0.95em;">
+            <strong>Figure 2:</strong> Data augmentation pipeline for constructing the cold-start dataset with structured reasoning traces.
+          </figcaption>
+        </figure>
+
+        <p>We solved the core optimization challenge by engineering a hierarchical, verifiable reward function that strictly prioritizes structural integrity before evaluating semantic precision. Our implementation employs a hard gating mechanism: if the output violates the required XML structure (missing tags or incorrect order), the total score is immediately zeroed out, bypassing all subsequent checks.</p>
+        <p>For content evaluation, we treat answerable and unanswerable queries with distinct, rigorous logic. For solvable queries, we utilize symbolic verification to reward mathematical accuracy while imposing a strict penalty (-1.0) for lazy refusals (e.g., claiming "I don't know" when a solution exists).</p>
+        <p>Crucially, for unanswerable queries, we devised a split-incentive mechanism: the model earns a baseline reward (0.3) simply for outputting the standard refusal token \boxed{I don't know}, but can only unlock the remaining majority credit (0.7) if the accompanying clarification is extracted and verified as semantically correct by an LLM-as-a-Judge.</p>
+
+        \[
+        \begin{aligned}
+        r_{\text{fmt}} &= \begin{cases}
+        1, & \text{if structure is valid and } \backslash\text{boxed is valid} \\
+        0, & \text{otherwise.}
+        \end{cases} \\[12pt]
+        r_{\text{ans}} &= \begin{cases} 
+        1, & \text{if answer matches ground truth} \\
+        -1, & \text{if output boxed "I don't know"} \\
+        0, & \text{otherwise}
+        \end{cases} \\[12pt]
+        r_{\text{ref}}' &= \begin{cases}
+        0, & \text{otherwise} \\
+        0.3, & \text{if output contains boxed "I don't know"} \\
+        1, & \text{and } \mathcal{V}(q,c^\star,\hat{c})=\texttt{Correct}
+        \end{cases}
+        \end{aligned}
+        \]
+
+        \[
+        \mathcal{V}(q, c^\star, \hat{c}) \in \{\texttt{Correct}, \texttt{Incorrect}\}
+        \]
+
+        <p>We anticipated success because Group Relative Policy Optimization (GRPO) is fundamentally better suited for reasoning tasks than traditional Actor-Critic methods. In complex chain-of-thought generation, training a separate Value Model to accurately predict expected returns is notoriously unstable and prone to high variance. GRPO circumvents this by using the group average as a dynamic baseline. This "self-referential" baseline provides a lower-variance advantage estimate, which is critical when the reward signal is sparse or binary (like mathematical correctness). We hypothesized that this stable optimization, combined with our dense, hierarchical reward signals (e.g., the 0.3/0.7 split), would allow the model to effectively navigate the narrow optimization landscape between "hallucination" and "lazy refusal" without suffering from reward collapse.</p>
+
+        <figure style="text-align: center; margin: 1.5em 0;">
+          <img src="./static/images/ppl.drawio.svg" alt="GRPO pipeline" style="max-width: 600px; width: 100%;">
+          <figcaption style="margin-top: 0.75em; color: #666; font-size: 0.95em;">
+            <strong>Figure 3:</strong> Overview of the GRPO training pipeline.
+          </figcaption>
+        </figure>
+        
+        <p style="border-left: 3px solid #dbdbdb; padding-left: 1em; color: #363636; font-weight: 500; font-size: 1.1em;">What challenges did you anticipate and/or encounter during the development of your approach? Did the very first thing you tried work? What is scientific novel of your approach to address the challenges?</p>
+        <p>We encountered four major challenges during development:</p>
+        <ol>
+          <li><strong>Mode Collapse and Reward Hacking</strong><br>
+          Early in training, the model discovered that outputting "I don't know" was a shortcut to avoid penalties for incorrect math answers while still collecting the base refusal reward. This led to mode collapse, where the refusal rate hit nearly 100%. <em style="color: #2c5282;">We overcame this by introducing a strict negative penalty (-1.0) for "lazy refusals" on answerable queries, forcing the model to actively balance safety with helpfulness.</em></li>
+          
+          <li><strong>Noisy Reward Signals from String Matching</strong><br>
+          Initially, we relied on exact string matching to evaluate answer correctness. This proved too rigid for mathematical tasks (e.g., rejecting "1/2" when the target was "0.5"), generating false negatives that confused the policy optimizer and destabilized training. <em style="color: #2c5282;">We resolved this by integrating the <a href="https://github.com/huggingface/Math-Verify" target="_blank">Math-Verify</a> library for symbolic comparison, ensuring the reward signal reflected genuine mathematical understanding rather than formatting luck.</em></li>
+          
+          <li><strong>Infrastructure and Throughput Bottlenecks</strong><br>
+          We faced substantial computational hurdles. First, the standard HuggingFace generation loop was too slow for the extensive group sampling required by GRPO. <em style="color: #2c5282;">We migrated our rollout backend to <a href="https://docs.vllm.ai/en/latest/" target="_blank">vLLM</a>, which dramatically improved inference throughput.</em></li>
+          
+          <li><strong>Resource Constraints in Evaluation</strong><br>
+          Running a large LLM-as-a-Judge alongside the policy model caused frequent Out-of-Memory (OOM) errors and slowed down the reward computation loop. <em style="color: #2c5282;">We experimented with various judge models and ultimately selected <a href="https://huggingface.co/IAAR-Shanghai/xVerify-3B-Ia" target="_blank">xVerify-3B</a>, a specialized lightweight verifier. This choice struck the optimal balance between judging accuracy and memory efficiency, allowing us to maintain a large batch size during training without OOM crashes.</em></li>
+        </ol>
+
+      </div>
+    </div>
+  </div>
+
+  <hr style="margin: 2rem 0; border: none; border-top: 1px solid #dbdbdb;">
+
+  <!-- Results -->
+  <div class="columns is-centered">
+    <div class="column is-full-width">
+      <h2 class="title is-3">Results</h2>
+
+      <div class="content has-text-justified">
+
+        <figure class="has-text-centered" style="margin-bottom: 1.5rem;">
+          <img src="static/images/results.jpg" alt="Results Table" style="max-width: 100%; height: auto;">
+          <figcaption style="margin-top: 0.75rem; font-size: 0.95rem; color: #4a4a4a;">
+            <strong>Results on ABSTAIN-TEST-SUM evaluated by strict protocol.</strong> Models marked with * use the V1 model instruction, models without * use the V2 model instruction. Bold indicates the best performance in each column.
+          </figcaption>
+        </figure>
+
+        <figure class="has-text-centered" style="margin-bottom: 1.5rem;">
+          <img src="static/images/15291765691042_.pic.jpg" alt="Results Table Permissive" style="max-width: 100%; height: auto;">
+          <figcaption style="margin-top: 0.75rem; font-size: 0.95rem; color: #4a4a4a;">
+            <strong>Results on ABSTAIN-TEST-SUM evaluated by permissive protocol.</strong> Models marked with * use the V1 model instruction; models without * use the V2 model instruction. Bold indicates the best performance in each column.
+          </figcaption>
+        </figure>
+
+        <p>
+          Our method, <strong>Abstain-R1</strong> (based on Qwen2.5-3B), demonstrates that rigorous reinforcement learning can effectively solve the "Hallucination Tax" without compromising reasoning capabilities. Despite its compact size, Abstain-R1 achieves clarification and refusal performance comparable to—and in some cases exceeding—much larger proprietary reasoning models.
+        </p>
+
+        <h3 class="title is-4" style="margin-top: 1.5rem;">Key Performance Highlights</h3>
+
+        <p>
+          <strong>Zero False Refusals on Solvable Queries:</strong> Abstain-R1 achieves a <strong>0.0% False Unknown rate (A-FU)</strong> on answerable queries. This proves that our "strict negative penalty" mechanism successfully prevents the model from becoming "lazy" or overly conservative—a common failure mode in safety-aligned models.
+        </p>
+
+        <p>
+          <strong>Competitive Mathematical Accuracy:</strong> While gaining the ability to refuse, the model maintains a strong <strong>61.4% Accuracy (A-Acc)</strong> on answerable mathematical tasks, remaining highly competitive within the open-source 3B parameter family.
+        </p>
+
+        <p>
+          <strong>Surpassing Larger Reasoning Models:</strong> On unanswerable queries, Abstain-R1 delivers meaningful clarifications that outperform specialized reasoning models.
+        </p>
+
+        <ul>
+          <li><strong>Vs. DeepSeek Reason:</strong> We achieve notably stronger performance (U-Ref 51.7% vs. 45.1%; U-Clar 50.0% vs. 43.7%).</li>
+          <li><strong>Vs. GPT-5.1 Reasoning Medium:</strong> We achieve comparable performance (U-Ref 51.7% vs. 50.7%; U-Clar 50.0% vs. 48.2%), demonstrating that efficient RLVR can bridge the gap between small open-source models and proprietary giants.</li>
+        </ul>
+
+      </div>
+    </div>
+  </div>
+
+  <hr style="margin: 2rem 0; border: none; border-top: 1px solid #dbdbdb;">
+
+  
+</section>
+
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            This means you are free to borrow the <a
+              href="https://github.com/nerfies/nerfies.github.io">source code</a> of this website,
+            we just ask that you link back to this page in the footer.
+            Please remember to remove the analytics code included in the header of the website which
+            you do not want on your website.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
